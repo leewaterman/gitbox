@@ -84,11 +84,15 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>GBApplication</string>
-	<!-- Sparkle auto-update removed: gitboxapp.com is abandoned, so the feed
-	     can never serve a legitimate update, and Sparkle's failed update
-	     cycle relaunched the app in a loop. -->
+	<!-- Sparkle: automatic checks disabled — the original gitboxapp.com feed
+	     host is abandoned, and its failed update cycle relaunched the app in
+	     a loop. The feed URL must still be present (this Sparkle version
+	     throws NSException at launch without one), so it points to the fork,
+	     which can serve a real appcast if releases ever resume. -->
 	<key>SUEnableAutomaticChecks</key>
 	<false/>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/leewaterman/gitbox/master/appcast.xml</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>sparkle_dsa_pub.pem</string>
 </dict>
