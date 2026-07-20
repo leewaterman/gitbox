@@ -84,10 +84,11 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>GBApplication</string>
+	<!-- Sparkle auto-update removed: gitboxapp.com is abandoned, so the feed
+	     can never serve a legitimate update, and Sparkle's failed update
+	     cycle relaunched the app in a loop. -->
 	<key>SUEnableAutomaticChecks</key>
-	<true/>
-	<key>SUFeedURL</key>
-	<string>${SPARKLE_FEED_URL}</string>
+	<false/>
 	<key>SUPublicDSAKeyFile</key>
 	<string>sparkle_dsa_pub.pem</string>
 </dict>
