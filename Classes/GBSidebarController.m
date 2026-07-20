@@ -669,13 +669,8 @@
 
 - (void) updateBuyButton
 {
-#if GITBOX_APP_STORE
-#else
-	
-	NSString* license = [[NSUserDefaults standardUserDefaults] objectForKey:@"license"];
-	[self.buyButton setHidden:OAValidateLicenseNumber(license)];
-	
-#endif
+	// The store is long gone; never show the buy button.
+	[self.buyButton setHidden:YES];
 }
 
 
