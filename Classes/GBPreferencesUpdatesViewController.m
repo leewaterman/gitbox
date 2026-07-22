@@ -1,5 +1,6 @@
 
-#import "Sparkle/Sparkle.h"
+// Sparkle removed; this pane is no longer registered, but the file still
+// compiles as a harmless stub.
 #import "GBPreferencesUpdatesViewController.h"
 
 @implementation GBPreferencesUpdatesViewController
@@ -11,12 +12,7 @@
 
 - (IBAction)checkForUpdates:(id)sender
 {
-	[self.updater checkForUpdates:sender];
-}
-
-- (SUUpdater*) updater
-{
-	return [SUUpdater sharedUpdater];
+	// No updater in this build.
 }
 
 

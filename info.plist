@@ -82,12 +82,20 @@
 	<string>Gitbox ${APP_VERSION} © 2012, Oleg Andreev</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
+	<!-- UI predates dark mode and renders badly in it; always use light appearance. -->
+	<key>NSRequiresAquaSystemAppearance</key>
+	<true/>
 	<key>NSPrincipalClass</key>
 	<string>GBApplication</string>
+	<!-- Sparkle: automatic checks disabled — the original gitboxapp.com feed
+	     host is abandoned, and its failed update cycle relaunched the app in
+	     a loop. The feed URL must still be present (this Sparkle version
+	     throws NSException at launch without one), so it points to the fork,
+	     which can serve a real appcast if releases ever resume. -->
 	<key>SUEnableAutomaticChecks</key>
-	<true/>
+	<false/>
 	<key>SUFeedURL</key>
-	<string>${SPARKLE_FEED_URL}</string>
+	<string>https://raw.githubusercontent.com/leewaterman/gitbox/master/appcast.xml</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>sparkle_dsa_pub.pem</string>
 </dict>

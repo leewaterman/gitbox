@@ -38,9 +38,8 @@
 
 #import "iRate.h"
 
-#if !GITBOX_APP_STORE
-#import "Sparkle/Sparkle.h"
-#endif
+// Sparkle auto-update removed: the framework had no arm64 slice and the update
+// host is dead. This build does not self-update.
 
 @interface GBAppDelegate () <NSApplicationDelegate, NSOpenSavePanelDelegate, iRateDelegate>
 
@@ -58,7 +57,7 @@
 
 @implementation GBAppDelegate {
 	NSUInteger _diffToolsControllerIndex;
-	NSUInteger _licenseControllerIndex;
+	NSInteger _licenseControllerIndex; // -1 when there is no license pane
 }
 
 + (void) initialize
@@ -113,11 +112,10 @@
 
 - (IBAction) checkForUpdates:(id)sender
 {
-#if !GITBOX_APP_STORE
-	[[SUUpdater sharedUpdater] checkForUpdates:sender];
-#else
+#if GITBOX_APP_STORE
 	[self rateInAppStore:sender];
 #endif
+	// Non-App-Store: no updater (Sparkle removed).
 }
 
 - (IBAction) showOnlineHelp:sender
@@ -128,6 +126,8 @@
 
 - (IBAction) showLicense:(id)sender
 {
+	// No license pane in this build; nothing to show.
+	if (_licenseControllerIndex < 0) return;
 	[self.preferencesController selectControllerAtIndex:_licenseControllerIndex];
 	[self.preferencesController showWindow:nil];
 }
@@ -196,22 +196,7 @@
 		[[NSUserDefaults standardUserDefaults] setObject:[GBChange defaultDiffTool] forKey:kGBChangeDiffToolKey];
 	}
 	
-#if !GITBOX_APP_STORE
-	[SUUpdater sharedUpdater]; // preload updater
-	
-	#if DEBUG
-		// Make beta builds update themselves regularly.
-		[[SUUpdater sharedUpdater] resetUpdateCycle];
-		[[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates:YES];
-		[[SUUpdater sharedUpdater] setAutomaticallyDownloadsUpdates:YES];
-		[[SUUpdater sharedUpdater] setUpdateCheckInterval:12*60*60];
-		double delayInSeconds = 1.0;
-		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-			[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
-		});
-	#endif
-#endif
+	// Sparkle updater preload/auto-check removed.
 	
 #if DEBUG_iRate
 #warning DEBUG: launching iRate dialog on start
@@ -250,13 +235,13 @@
 									   nil];
 
 #else
+	// License pane removed: this build needs no license.
+	// Updates pane removed: Sparkle auto-update dropped for the native build.
 	NSArray* preferencesControllers = [NSArray arrayWithObjects:
 									   [GBPreferencesDiffViewController controller],
 									   [GBPreferencesConfigViewController controller],
-									   [GBPreferencesUpdatesViewController controller],
-									   [GBPreferencesLicenseViewController controller],
 									   nil];
-	_licenseControllerIndex = 3;
+	_licenseControllerIndex = -1;
 #endif
 	
 	_diffToolsControllerIndex = 0;
@@ -303,21 +288,7 @@
 // Show the window if there's no key window at the moment. 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification
 {
-#if !GITBOX_APP_STORE
-#if DEBUG
-	static NSTimeInterval lastCheckStamp = 0.0;
-	
-	if ([[NSDate date] timeIntervalSince1970] - lastCheckStamp > 3600)
-	{
-		lastCheckStamp = [[NSDate date] timeIntervalSince1970];
-		double delayInSeconds = 1.0;
-		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-			[[SUUpdater sharedUpdater] checkForUpdatesInBackground];
-		});
-	}
-#endif
-#endif
+	// Sparkle background update check removed.
 	if (![NSApp keyWindow])
 	{
 		[self.windowController showWindow:self];

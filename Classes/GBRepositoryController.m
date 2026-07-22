@@ -1154,7 +1154,8 @@
 {
 	[self invalidateDelayedRemoteStateUpdate];
 	if (stopped) return;
-	
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"GBDisableAutoFetch"]) return;
+
 	int gen = remoteStateUpdateGeneration;
 	
 	interval = MIN(interval, 60.0*60.0);
@@ -1179,6 +1180,11 @@
 - (void) updateRemoteRefsSilently:(BOOL)silently withBlock:(void(^)())aBlock
 {
 	if (!self.repository)
+	{
+		if (aBlock) aBlock();
+		return;
+	}
+	if (silently && [[NSUserDefaults standardUserDefaults] boolForKey:@"GBDisableAutoFetch"])
 	{
 		if (aBlock) aBlock();
 		return;

@@ -621,7 +621,11 @@
 	//	pathURL isFileURL = 1
 	//	pathURL path = /Users/oleganza/Work/gitbox
 	//	pathURL absolute path = /Users/oleganza/Work/gitbox
-	return [NSURL URLWithString:[relativePath stringByAddingAllPercentEscapesUsingEncoding:NSUTF8StringEncoding] relativeToURL:self.url];
+	// "/" must stay unescaped: the strict RFC 3986 parser (macOS 26+) no longer
+	// treats %2F as a path separator, so -relativePath would return the raw
+	// percent-encoded string.
+	NSString* escapedPath = [relativePath stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+	return [NSURL URLWithString:escapedPath relativeToURL:self.url];
 }
 
 

@@ -515,31 +515,8 @@
 
 - (BOOL) validateAdditionalRepositories:(NSUInteger)additionalRepos
 {
-#if !GITBOX_APP_STORE
-	__block NSUInteger repos = 0;
-	[self.sidebarItem enumerateChildrenUsingBlock:^(GBSidebarItem *item, NSUInteger idx, BOOL *stop) {
-		if ([item.object isKindOfClass:[GBRepositoryController class]] ||
-			[item.object isKindOfClass:[GBRepositoryCloningController class]])
-		{
-			repos++;
-		}
-	}];
-	
-	if ((additionalRepos + repos) > 1)
-	{
-		NSString* license = [[NSUserDefaults standardUserDefaults] objectForKey:@"license"];
-		if (!OAValidateLicenseNumber(license))
-		{
-			[NSApp sendAction:@selector(showLicense:) to:nil from:self];
-			
-			NSString* license = [[NSUserDefaults standardUserDefaults] objectForKey:@"license"];
-			if (!OAValidateLicenseNumber(license))
-			{
-				return NO;
-			}
-		}
-	}
-#endif
+	// This build is unlicensed by design (the vendor and store are gone);
+	// allow any number of repositories.
 	return YES;
 }
 

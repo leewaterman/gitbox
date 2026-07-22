@@ -662,10 +662,17 @@ NSString* OATaskDidDeallocateNotification  = @"OATaskDidDeallocateNotification";
 	}
 	else
 	{
-		
+		// Give the task an explicit stdin. A GUI app launched by launchd runs
+		// with fd 0 closed and guarded; if standardInput is left unset, NSTask
+		// dup()s onto that guarded fd 0 while spawning the child and the kernel
+		// kills us with EXC_GUARD (GUARD_TYPE_FD, "DUP on file descriptor 0").
+		// That's a Mach exception, so the @try/@catch around -launch can't
+		// catch it. git never reads stdin here, so /dev/null is correct.
+		[self.nstask setStandardInput:[NSFileHandle fileHandleWithNullDevice]];
+
 		// FIXME: possibly this was an issue when gitbox was running out of file descriptors
 		//    *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '*** -[NSCFDictionary setObject:forKey:]: attempt to insert nil value (key: _NSTaskOutputFileHandle)'
-		
+
 		if (!self.standardOutputHandleOrPipe)
 		{
 			self.standardOutputHandleOrPipe = [[NSPipe alloc] init];
