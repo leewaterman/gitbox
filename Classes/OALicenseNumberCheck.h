@@ -1,7 +1,10 @@
 #import <Foundation/Foundation.h>
 #import <Security/Security.h>
 #import <CommonCrypto/CommonDigest.h>
-#import "OAAppStoreReceipt.h"
+// OAAppStoreReceipt.h (openssl-based MAS receipt validation) is intentionally
+// NOT imported: it is only used by the GITBOX_APP_STORE build, which this fork
+// does not compile, and it was the sole reason the app linked libssl/libcrypto.
+// Dropping it lets the app build as a clean native binary with no openssl.
 
 #define OALicenseDidUpdateNotification @"OALicenseDidUpdateNotification"
 
@@ -15,42 +18,11 @@ NS_INLINE BOOL OAMASCopyReceiptFromTo(NSString* from, NSString* to)
 
 NS_INLINE BOOL OAValidateExternalMASReceipt()
 {
-	NSString* receiptPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"Contents/_MASReceipt/receipt"];
-	
-	NSArray* appsupportpaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-	
-	NSString* applicationSupportPath = nil;
-	
-	if ([appsupportpaths count] > 0)
-	{
-		applicationSupportPath = [appsupportpaths objectAtIndex:0];
-	}
-	
-	NSString* receiptPath2 = [applicationSupportPath stringByAppendingPathComponent:@"Gitbox/MASReceipt"];
-	NSString* receiptPath3 = @"/Applications/Gitbox.app/Contents/_MASReceipt/receipt";
-	
-	if (!OAValidateAppStoreReceiptAtPath(receiptPath))
-	{
-		if (!OAValidateAppStoreReceiptAtPath(receiptPath2))
-		{
-			if (!OAValidateAppStoreReceiptAtPath(receiptPath3))
-			{
-				//NSLog(@"Gitbox main: AppStore receipt not found.", receiptPath);
-				return NO;
-			}
-			else
-			{
-				// Valid receipt is found in default installation in /Applications/Gitbox.app. Copy to Application Support.
-				OAMASCopyReceiptFromTo(receiptPath3, receiptPath2);
-			}
-		}
-	}
-	else
-	{
-		// Valid receipt is found in current bundle. Copy to Application Support.
-		OAMASCopyReceiptFromTo(receiptPath, receiptPath2);
-	}
-	return YES;
+	// Mac App Store receipt validation lived here and depended on openssl via
+	// OAAppStoreReceipt.h. This fork is not a MAS build and treats itself as
+	// always licensed (see OAValidateLicenseNumber), so this is now dead code.
+	// Stubbed to keep the symbol defined without pulling in openssl.
+	return NO;
 }
 
 
