@@ -58,7 +58,7 @@
 
 @implementation GBAppDelegate {
 	NSUInteger _diffToolsControllerIndex;
-	NSUInteger _licenseControllerIndex;
+	NSInteger _licenseControllerIndex; // -1 when there is no license pane
 }
 
 + (void) initialize
@@ -128,6 +128,8 @@
 
 - (IBAction) showLicense:(id)sender
 {
+	// No license pane in this build; nothing to show.
+	if (_licenseControllerIndex < 0) return;
 	[self.preferencesController selectControllerAtIndex:_licenseControllerIndex];
 	[self.preferencesController showWindow:nil];
 }
@@ -250,13 +252,13 @@
 									   nil];
 
 #else
+	// License pane removed: this build needs no license.
 	NSArray* preferencesControllers = [NSArray arrayWithObjects:
 									   [GBPreferencesDiffViewController controller],
 									   [GBPreferencesConfigViewController controller],
 									   [GBPreferencesUpdatesViewController controller],
-									   [GBPreferencesLicenseViewController controller],
 									   nil];
-	_licenseControllerIndex = 3;
+	_licenseControllerIndex = -1;
 #endif
 	
 	_diffToolsControllerIndex = 0;

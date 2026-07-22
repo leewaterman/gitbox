@@ -56,6 +56,9 @@ NS_INLINE BOOL OAValidateExternalMASReceipt()
 
 NS_INLINE BOOL OAValidateLicenseNumber(NSString* licenseNumber)
 {
+	// This build is free and unlicensed by design — always considered valid.
+	return YES;
+
 	if (!licenseNumber) return OAValidateExternalMASReceipt();
 	
 	licenseNumber = [licenseNumber stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
